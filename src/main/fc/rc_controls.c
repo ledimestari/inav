@@ -155,19 +155,19 @@ bool checkStickPosition(stickPositions_e stickPos)
 static void updateRcStickPositions(void)
 {
     stickPositions_e tmp = 0;
+    if (!IS_RC_MODE_ACTIVE(BOXBLOCKSTICKINPUTS)) {
+        tmp |= ((rxGetChannelValue(ROLL) > rxConfig()->mincheck) ? 0x02 : 0x00) << (ROLL * 2);
+        tmp |= ((rxGetChannelValue(ROLL) < rxConfig()->maxcheck) ? 0x01 : 0x00) << (ROLL * 2);
 
-    tmp |= ((rxGetChannelValue(ROLL) > rxConfig()->mincheck) ? 0x02 : 0x00) << (ROLL * 2);
-    tmp |= ((rxGetChannelValue(ROLL) < rxConfig()->maxcheck) ? 0x01 : 0x00) << (ROLL * 2);
+        tmp |= ((rxGetChannelValue(PITCH) > rxConfig()->mincheck) ? 0x02 : 0x00) << (PITCH * 2);
+        tmp |= ((rxGetChannelValue(PITCH) < rxConfig()->maxcheck) ? 0x01 : 0x00) << (PITCH * 2);
 
-    tmp |= ((rxGetChannelValue(PITCH) > rxConfig()->mincheck) ? 0x02 : 0x00) << (PITCH * 2);
-    tmp |= ((rxGetChannelValue(PITCH) < rxConfig()->maxcheck) ? 0x01 : 0x00) << (PITCH * 2);
+        tmp |= ((rxGetChannelValue(YAW) > rxConfig()->mincheck) ? 0x02 : 0x00) << (YAW * 2);
+        tmp |= ((rxGetChannelValue(YAW) < rxConfig()->maxcheck) ? 0x01 : 0x00) << (YAW * 2);
 
-    tmp |= ((rxGetChannelValue(YAW) > rxConfig()->mincheck) ? 0x02 : 0x00) << (YAW * 2);
-    tmp |= ((rxGetChannelValue(YAW) < rxConfig()->maxcheck) ? 0x01 : 0x00) << (YAW * 2);
-
-    tmp |= ((rxGetChannelValue(THROTTLE) > rxConfig()->mincheck) ? 0x02 : 0x00) << (THROTTLE * 2);
-    tmp |= ((rxGetChannelValue(THROTTLE) < rxConfig()->maxcheck) ? 0x01 : 0x00) << (THROTTLE * 2);
-
+        tmp |= ((rxGetChannelValue(THROTTLE) > rxConfig()->mincheck) ? 0x02 : 0x00) << (THROTTLE * 2);
+        tmp |= ((rxGetChannelValue(THROTTLE) < rxConfig()->maxcheck) ? 0x01 : 0x00) << (THROTTLE * 2);
+    }
     rcStickPositions = tmp;
 }
 
@@ -179,9 +179,14 @@ void processRcStickPositions(throttleStatus_e throttleStatus)
     static timeMs_t rcDisarmTimeMs;     // this is an extra guard for disarming through switch to prevent that one frame can disarm it
     const timeMs_t currentTimeMs = millis();
 
-    updateRcStickPositions();
+    if (!IS_RC_MODE_ACTIVE(BOXBLOCKSTICKINPUTS)) {
+        updateRcStickPositions();
+    }
+    uint32_t stTmp;
+    if (!IS_RC_MODE_ACTIVE(BOXBLOCKSTICKINPUTS)) {
+        stTmp = getRcStickPositions();
+    }
 
-    uint32_t stTmp = getRcStickPositions();
     if (stTmp == rcSticks) {
         if (rcDelayCommand < 250) {
             if ((currentTimeMs - lastTickTimeMs) >= MIN_RC_TICK_INTERVAL_MS) {

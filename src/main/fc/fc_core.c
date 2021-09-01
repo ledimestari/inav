@@ -642,7 +642,16 @@ void processRx(timeUs_t currentTimeUs)
         }
     }
 
-    processRcStickPositions(throttleStatus);
+    // If BOXBLOCKINPUTS is active, do not processRcStickPositions
+    //! A bad comment
+    if (!IS_RC_MODE_ACTIVE(BOXBLOCKSTICKINPUTS)) {
+        processRcStickPositions(throttleStatus);
+    }
+    
+    if (IS_RC_MODE_ACTIVE(BOXBLOCKSTICKINPUTS)) {
+        beeper(BEEPER_ACTION_SUCCESS);
+    }
+    //processRcStickPositions(throttleStatus);
     processAirmode();
     updateActivatedModes();
 

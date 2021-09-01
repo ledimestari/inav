@@ -92,6 +92,7 @@ static const box_t boxes[CHECKBOX_ITEM_COUNT + 1] = {
     { BOXTURTLE, "TURTLE", 52 },
     { BOXNAVCRUISE, "NAV CRUISE", 53 },
     { BOXAUTOLEVEL, "AUTO LEVEL", 54 },
+    { BOXBLOCKSTICKINPUTS, "BLOCK STICK INPUTS", 55 },
     { CHECKBOX_ITEM_COUNT, NULL, 0xFF }
 };
 
@@ -265,6 +266,7 @@ void initActiveBoxIds(void)
     }
 
     activeBoxIds[activeBoxIdCount++] = BOXBEEPERON;
+    activeBoxIds[activeBoxIdCount++] = BOXBLOCKSTICKINPUTS;
 
 #ifdef USE_LIGHTS
     activeBoxIds[activeBoxIdCount++] = BOXLIGHTS;
@@ -385,6 +387,7 @@ void packBoxModeFlags(boxBitmask_t * mspBoxModeFlags)
     CHECK_ACTIVE_BOX(IS_ENABLED(IS_RC_MODE_ACTIVE(BOXMSPRCOVERRIDE)),   BOXMSPRCOVERRIDE);
 #endif
     CHECK_ACTIVE_BOX(IS_ENABLED(IS_RC_MODE_ACTIVE(BOXAUTOLEVEL)),       BOXAUTOLEVEL);
+    CHECK_ACTIVE_BOX(IS_ENABLED(IS_RC_MODE_ACTIVE(BOXBLOCKSTICKINPUTS)), BOXBLOCKSTICKINPUTS);
 
     memset(mspBoxModeFlags, 0, sizeof(boxBitmask_t));
     for (uint32_t i = 0; i < activeBoxIdCount; i++) {
